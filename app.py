@@ -47,7 +47,8 @@ def user_update():
     users.append(request.get_json()['username'])
     return "Replaced " + username + " with " + request.get_json()['username']
 
-@app.route("/users?majors=<major>", methods=["GET"])
+#@app.route("/users?majors=<major>", methods=["GET"])
+@app.route("/users/majors/<major>", methods=["GET"])
 def filter_user_by_major(major):
     user_coll = user_db['users']
     return JSONEncoder().encode(list(user_coll.find({'major': major})))
