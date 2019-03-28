@@ -11,7 +11,7 @@ class JSONEncoder(json.JSONEncoder):
             return str(o)
         return json.JSONEncoder.default(self, o)
 
-client = MongoClient('localhost', 27017)
+client = MongoClient('mongodb+srv://admin:madhusivaraj@passionfruit-uqm6q.mongodb.net/test?retryWrites=true', 27017)
 
 user_db = client['user_db']
 
