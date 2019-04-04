@@ -1,9 +1,15 @@
 from flask import Flask, request, jsonify
-import json
+import json, uuid
 from pymongo import MongoClient
 from bson import ObjectId
+from functools import wraps
 app = Flask(__name__)
 
+import firebase_admin
+from firebase_admin import credentials, auth
+
+cred = credentials.Certificate('firebase.json')
+default_app = firebase_admin.initialize_app(cred)
 
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):
@@ -17,13 +23,38 @@ user_db = client['user_db']
 
 users = []
 
-@app.route("/users", methods=["POST", "GET"])
+# This function is a decorator
+def auth_required(f):
+    @wraps(f)
+    def verify_token(*args, **kwargs):
+        # Verify firebase auth token here
+        try:    
+            id_token = request.args.get('token')
+            t = auth.get_user(id_token)
+            print(t.toJSON())
+            custom_token=auth.create_custom_token(id_token)
+            result = auth.verify_id_token(custom_token)
+            print(result['name'] + " made a request")
+        except Exception as e:
+            print(e)
+            return jsonify({"error": "Bad token"})      
+        return f(*args, **kwargs)
+    return verify_token
+
+@app.route("/")
+def hello():
+    return "PASSIONFRUIT"
+
+@app.route("/login")
+def login():
+    return "login"
+
+@app.route("/users", methods=["POST"])
+#@auth_required
 def users_list():
-    if request.method == 'GET':
-        user_coll = user_db['users']
-        return JSONEncoder().encode(list(user_coll.find()))
-    else:
+        user_id = str(uuid.uuid4());
         user = {
+            "user_id": user_id,
             "username": request.get_json()['username'],
             "name": request.get_json()['name'],
             "age": request.get_json()['age'],
@@ -33,33 +64,33 @@ def users_list():
         user_coll = user_db['users']
         user_coll.insert_one(user)
         #print user["socials"]["insta"]
-        return "Done."
+        return "Created user."
 
-@app.route("/users/<user_name>", methods=["DELETE"])
-def user_delete(user_name):
+@app.route("/users", methods=["DELETE"])
+#@auth_required
+def user_delete():
+    user_id = request.args.get('user_id')
     user_coll = user_db['users']
-    user_coll.delete_one({"username": user_name})
+    user_coll.delete_one({"user_id": user_id})
     return "Deleted user."
 
-@app.route("/users/<user_name>", methods=["POST"])
+@app.route("/users", methods=["POST"])
+#@auth_required
 def user_update():
-    users.remove(user_name)
-    users.append(request.get_json()['username'])
-    return "Replaced " + username + " with " + request.get_json()['username']
-
-#@app.route("/users?majors=<major>", methods=["GET"])
-@app.route("/users/majors/<major>", methods=["GET"])
-def filter_user_by_major(major):
+    user_id = request.args.get('user_id')
     user_coll = user_db['users']
-    return JSONEncoder().encode(list(user_coll.find({'major': major})))
-    #key and value
+    user_coll.update_one({"user_id": user_id})
+    return "Update user."
 
-@app.route("/users/years/<year>", methods=["GET"])
-def filter_user_by_year(year):
+@app.route("/users", methods=["GET"])
+#@auth_required
+def filter_by():
     user_coll = user_db['users']
-    return JSONEncoder().encode(list(user_coll.find({'year': year})))
+    #print(request.args)
+    return JSONEncoder().encode(list(user_coll.find(request.args)))
 
 @app.route("/majors", methods=["GET"])
+#@auth_required
 def list_of_majors():
     with open('majors.txt') as majors_list:
         inputs=[]
@@ -69,6 +100,7 @@ def list_of_majors():
         return JSONEncoder().encode(majors)
 
 @app.route("/years", methods=["GET"])
+#@auth_required
 def list_of_years():
     with open('years.txt') as years_list:
         inputs=[]
@@ -76,8 +108,4 @@ def list_of_years():
             inputs.append(line.rstrip())
         years=({"years":inputs})
         return JSONEncoder().encode(years)
-
-
-
-
 

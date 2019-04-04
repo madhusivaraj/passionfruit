@@ -1,5 +1,27 @@
-figure out filtering
-heroku
+FOR NEEXT WEEKL
+- figure out filtering{
+	from flask import request
 
+@app.route('/data')
+def data():
+    # here we want to get the value of user (i.e. ?user=some-value)
+    user = request.args.get('user')
+}
+
+- aditya's guide 
+
+
+- login/registration => firebase
+----------------------------------------------------------------------------------
+DONE:
+heroku -- done
+
+
+----------------------------------------------------------------------------------
+
+TO DO LATER:
+
+
+query by user id
 update user by id
-login/registration = firebase
+add pictures and bio
