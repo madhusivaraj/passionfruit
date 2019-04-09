@@ -5,12 +5,12 @@ from bson import ObjectId
 from functools import wraps
 app = Flask(__name__)
 
-import firebase_admin
-from firebase_admin import credentials, auth
+#import firebase_admin
+#from firebase_admin import credentials, auth
 
 
-cred = credentials.Certificate('firebase.json')
-default_app = firebase_admin.initialize_app(cred)
+#cred = credentials.Certificate('firebase.json')
+#default_app = firebase_admin.initialize_app(cred)
 
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):
