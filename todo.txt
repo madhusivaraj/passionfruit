@@ -21,7 +21,7 @@ heroku -- done
 
 TO DO LATER:
 
-
-query by user id
+make sure user is not in the list
+@ /user/id
 update user by id
-add pictures and bio
+add pictures

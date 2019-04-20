@@ -50,42 +50,54 @@ def hello():
 def login():
     return "login"
 
+@app.route("/upload", methods=["POST"])
+#@auth_required    return "MADWHO"
+def upload():
+    imagefile = request.files.get('imagefile', '')
+    return "success"
+
 @app.route("/users", methods=["POST"])
 #@auth_required
 def users_list():
-        user_id = str(uuid.uuid4());
         user = {
-            "user_id": user_id,
             "username": request.get_json()['username'],
             "name": request.get_json()['name'],
             "age": request.get_json()['age'],
             "major": request.get_json()['major'],
-            "year": request.get_json()['year']
+            "year": request.get_json()['year'],
+            "bio": request.get_json()['bio']
         }
         user_coll = user_db['users']
         user_coll.insert_one(user)
         #print user["socials"]["insta"]
         return "Created user."
 
-@app.route("/users", methods=["DELETE"])
+@app.route("/users/<id>", methods=["DELETE"])
 #@auth_required
-def user_delete():
-    user_id = request.args.get('user_id')
+def user_delete(id):
+    #user_id = request.args.get('user_id')
     user_coll = user_db['users']
-    user_coll.delete_one({"user_id": user_id})
+    user_coll.delete_one({"_id": ObjectID(user_id)})
     return "Deleted user."
 
-@app.route("/users", methods=["POST"])
+@app.route("/users/<id>", methods=["PUT"])
 #@auth_required
-def user_update():
-    user_id = request.args.get('user_id')
+def user_update(id):
+    #user_id = request.args.get('user_id')
     user_coll = user_db['users']
-    user_coll.update_one({"user_id": user_id})
+    user_coll.update_one({"_id": ObjectID(id)})
     return "Update user."
 
 @app.route("/users", methods=["GET"])
 #@auth_required
 def filter_by():
+    user_coll = user_db['users']
+    #print(request.args)
+    return JSONEncoder().encode(list(user_coll.find(request.args)))
+
+@app.route("/users/<id>", methods=["GET"])
+#@auth_required
+def get_user(id):
     user_coll = user_db['users']
     #print(request.args)
     return JSONEncoder().encode(list(user_coll.find(request.args)))
