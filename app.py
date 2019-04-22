@@ -2,13 +2,16 @@ from flask import Flask, request, jsonify
 import json, uuid
 from pymongo import MongoClient
 from bson import ObjectId
+from bson.json_util import dumps
+
 from functools import wraps
 app = Flask(__name__)
+app.debug = True
 
 #import firebase_admin
 #from firebase_admin import credentials, auth
 
-
+#sdf
 #cred = credentials.Certificate('firebase.json')
 #default_app = firebase_admin.initialize_app(cred)
 
@@ -23,6 +26,7 @@ client = MongoClient('mongodb+srv://admin:madhusivaraj@passionfruit-uqm6q.mongod
 user_db = client['user_db']
 
 users = []
+all_users={}
 
 # This function is a decorator
 def auth_required(f):
@@ -93,14 +97,26 @@ def user_update(id):
 def filter_by():
     user_coll = user_db['users']
     #print(request.args)
-    return JSONEncoder().encode(list(user_coll.find(request.args)))
+    var=dumps(user_coll.find(request.args))
+    all_users['users']=json.loads(var)
+    all_users['count']=len(all_users['users'])
+    return jsonify(all_users)
 
-@app.route("/users/<id>", methods=["GET"])
+#@app.route("/users", methods=["GET"])
 #@auth_required
-def get_user(id):
+#def filter_by():
+#    user_coll = user_db['users']
+#    #print(request.args)
+#    var=user_coll.find(request.args).toArray()
+#    all_users['users']=JSONEncoder().encode(var)
+#    return jsonify(all_users)
+
+@app.route("/users/<uid>", methods=["GET"])
+#@auth_required
+def get_user(uid):
     user_coll = user_db['users']
     #print(request.args)
-    return JSONEncoder().encode(list(user_coll.find(request.args)))
+    return JSONEncoder().encode(list(user_coll.find({"_id": ObjectID(uid)})))
 
 @app.route("/majors", methods=["GET"])
 #@auth_required
