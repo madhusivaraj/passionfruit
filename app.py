@@ -81,7 +81,7 @@ def users_list():
 def user_delete(id):
     #user_id = request.args.get('user_id')
     user_coll = user_db['users']
-    user_coll.delete_one({"_id": ObjectID(user_id)})
+    user_coll.delete_one({"_id": ObjectId(id)})
     return "Deleted user."
 
 @app.route("/users/<id>", methods=["PUT"])
@@ -89,7 +89,7 @@ def user_delete(id):
 def user_update(id):
     #user_id = request.args.get('user_id')
     user_coll = user_db['users']
-    user_coll.update_one({"_id": ObjectID(id)})
+    user_coll.update_one({"_id": ObjectId(id)})
     return "Update user."
 
 @app.route("/users", methods=["GET"])
@@ -116,7 +116,7 @@ def filter_by():
 def get_user(uid):
     user_coll = user_db['users']
     #print(request.args)
-    return JSONEncoder().encode(list(user_coll.find({"_id": ObjectID(uid)})))
+    return JSONEncoder().encode(list(user_coll.find({"_id": ObjectId(uid)})))
 
 @app.route("/majors", methods=["GET"])
 #@auth_required
