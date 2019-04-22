@@ -89,8 +89,17 @@ def user_delete(id):
 #@auth_required
 def user_update(id):
     #user_id = request.args.get('user_id')
+    user = {
+            "username": request.get_json()['username'],
+            "name": request.get_json()['name'],
+            "age": request.get_json()['age'],
+            "major": request.get_json()['major'],
+            "year": request.get_json()['year'],
+            "bio": request.get_json()['bio'],
+            "socials": request.get_json()['socials']
+        }
     user_coll = user_db['users']
-    user_coll.update_one({"_id": ObjectId(id)})
+    user_coll.update_one({"_id": ObjectId(id)}, {'$set':user})
     return "Update user."
 
 @app.route("/users", methods=["GET"])
