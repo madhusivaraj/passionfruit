@@ -69,7 +69,8 @@ def users_list():
             "age": request.get_json()['age'],
             "major": request.get_json()['major'],
             "year": request.get_json()['year'],
-            "bio": request.get_json()['bio']
+            "bio": request.get_json()['bio'],
+            "socials": request.get_json()['socials']
         }
         user_coll = user_db['users']
         user_coll.insert_one(user)
