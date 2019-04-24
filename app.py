@@ -99,7 +99,8 @@ def user_update(id):
             "major": request.get_json()['major'],
             "year": request.get_json()['year'],
             "bio": request.get_json()['bio'],
-            "socials": request.get_json()['socials']
+            "socials": request.get_json()['socials'],
+            "photo_url": request.get_json()['photo_url']
         }
     user_coll = user_db['users']
     user_coll.update_one({"_id": ObjectId(id)}, {'$set':user})
