@@ -70,12 +70,15 @@ def users_list():
             "major": request.get_json()['major'],
             "year": request.get_json()['year'],
             "bio": request.get_json()['bio'],
-            "socials": request.get_json()['socials']
+            "socials": request.get_json()['socials'],
+            "photo_url": request.get_json()['photo_url']
         }
         user_coll = user_db['users']
         user_coll.insert_one(user)
-        #print user["socials"]["insta"]
-        return "Created user."
+        print(user["_id"])
+        user_id={"uid":str(user['_id'])}
+        return jsonify(user_id)
+        #return "Created User"
 
 @app.route("/users/<id>", methods=["DELETE"])
 #@auth_required

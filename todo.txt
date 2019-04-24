@@ -21,7 +21,7 @@ heroku -- done
 
 TO DO LATER:
 
-make sure user is not in the list
+make sure user is not in the list 
 @ /user/id == done
-update user by id
+update user by id = done
 add pictures
