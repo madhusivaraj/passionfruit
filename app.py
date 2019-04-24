@@ -151,3 +151,13 @@ def list_of_years():
         years=({"years":inputs})
         return JSONEncoder().encode(years)
 
+@app.route("/majorsAndYears", methods=["GET"])
+#@auth_required
+def list_of_majors_and_years():
+    with open('majors_and_years.txt') as majors_and_years_list:
+        inputs=[]
+        for line in majors_and_years_list:
+            inputs.append(line.rstrip())
+        majors_and_years=({"majors_and_lists":inputs})
+        return JSONEncoder().encode(majors_and_years)
+
